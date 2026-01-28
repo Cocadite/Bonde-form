@@ -2,8 +2,8 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, Events, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
 
 const db = require("./db/sqlite");
-const { startWeb } = require("./web/server");
-const interactionHandler = require("./handlers/interactionHandler");
+const { startWeb } = require("./server"); // ✅ corrigido
+const interactionHandler = require("./interactionHandler");
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
@@ -41,7 +41,6 @@ global.__onFormSubmitted = async ({ token }) => {
           { name: "Nick do Discord", value: discordTag, inline: false },
           { name: "Nick", value: row.nick, inline: true },
           { name: "Idade", value: String(row.idade), inline: true },
-          { name: "Recrutado por", value: row.recrutador, inline: false },
           { name: "Por que quer entrar", value: row.motivo, inline: false },
           { name: "Link do bonde", value: row.linkBonde, inline: false }
         )
