@@ -86,6 +86,9 @@ function startWeb() {
 
   app.listen(port, "0.0.0.0", () => {
     console.log(`🌐 Web online na porta ${port}`);
+if (require.main === module) {
+  startWeb();
+}
   });
 }
 
