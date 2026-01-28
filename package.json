@@ -6,8 +6,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "deploy": "node src/commands/deploy-commands.js"
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js"
   },
   "dependencies": {
     "discord.js": "^14.14.1",
