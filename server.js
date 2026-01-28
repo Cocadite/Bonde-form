@@ -6,7 +6,10 @@ const db = require("../db/sqlite");
 const { sanitizeText, toInt, isValidUrl } = require("../utils/validate");
 
 const app = express();
+
+// ✅ aceita form e JSON
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 function renderTemplate(raw, vars) {
   let out = raw;
@@ -17,7 +20,6 @@ function renderTemplate(raw, vars) {
 }
 
 app.get("/", (_req, res) => res.status(200).send("OK - Bonde Form Bot"));
-
 app.get("/health", (_req, res) => res.status(200).send("ok"));
 
 app.get("/form", (req, res) => {
@@ -31,7 +33,6 @@ app.get("/form", (req, res) => {
 
     const htmlPath = path.resolve(process.cwd(), "views", "form.html");
     const raw = fs.readFileSync(htmlPath, "utf-8");
-    // O discord tag real é preenchido pelo bot no momento de notificar
     res.send(renderTemplate(raw, { TOKEN: token, DISCORD_TAG: "SeuDiscord#0000" }));
   });
 });
@@ -39,13 +40,14 @@ app.get("/form", (req, res) => {
 app.post("/submit", (req, res) => {
   const token = sanitizeText(req.body.token, 120);
   const nick = sanitizeText(req.body.nick, 64);
-  const recrutador = sanitizeText(req.body.recrutador, 64);
+
+  // ✅ você disse que removeu “recrutador”, então não valida mais
   const motivo = sanitizeText(req.body.motivo, 700);
   const idade = toInt(req.body.idade, 5, 120);
   const linkBonde = sanitizeText(req.body.linkBonde, 300);
 
   if (!token) return res.status(400).send("Token ausente.");
-  if (!nick || !recrutador || !motivo || idade === null) return res.status(400).send("Campos inválidos.");
+  if (!nick || !motivo || idade === null) return res.status(400).send("Campos inválidos.");
   if (!isValidUrl(linkBonde)) return res.status(400).send("Link inválido.");
 
   db.get(`SELECT token, userId, used FROM form_tokens WHERE token = ?`, [token], (err, row) => {
@@ -59,21 +61,42 @@ app.post("/submit", (req, res) => {
       `INSERT INTO form_submissions
         (token, userId, discordTag, nick, idade, recrutador, motivo, linkBonde, createdAt)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [token, row.userId, "PENDING_TAG", nick, idade, recrutador, motivo, linkBonde, Date.now()],
+      [
+        token,
+        row.userId,
+        "PENDING_TAG",
+        nick,
+        idade,
+        null, // ✅ não tem mais recrutador
+        motivo,
+        linkBonde,
+        Date.now(),
+      ],
       (e2) => {
         if (e2) return res.status(500).send("Erro ao salvar.");
 
         if (global.__onFormSubmitted) global.__onFormSubmitted({ token });
 
-        res.status(200).send("<h2 style='font-family:Arial'>✅ Enviado! Aguarde aprovação no Discord.</h2>");
+        res
+          .status(200)
+          .send("<h2 style='font-family:Arial'>✅ Enviado! Aguarde aprovação no Discord.</h2>");
       }
     );
   });
 });
 
+let started = false;
+
 function startWeb() {
+  if (started) return;
+  started = true;
+
   const port = Number(process.env.PORT || 3000);
-  app.listen(port, () => console.log(`🌐 Web online na porta ${port}`));
+
+  // ✅ o mais importante pro Render:
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`🌐 Web online na porta ${port}`);
+  });
 }
 
 module.exports = { startWeb };
