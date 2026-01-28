@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const db = require("./sqlite");
+require("./sqlite");
 const { sanitizeText, toInt, isValidUrl } = require("./validate");
 
 const app = express();
@@ -89,4 +89,4 @@ function startWeb() {
   });
 }
 
-module.exports = { startWeb };
+module.exports = { startWeb };,
