@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bonde-form-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Configure the remaining env vars in the Render Dashboard:
+      # DISCORD_TOKEN, CLIENT_ID, GUILD_ID, FORM_REVIEW_CHANNEL_ID, APPROVED_ROLE_ID, BASE_URL

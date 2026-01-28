@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Formulário do Bonde</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#0b0b0f;color:#fff;margin:0;padding:24px}
+    .card{max-width:720px;margin:0 auto;background:#12121a;border:1px solid #27273a;border-radius:16px;padding:20px}
+    h1{margin:0 0 6px 0;font-size:22px}
+    p{margin:0 0 16px 0;color:#cfcfe8}
+    label{display:block;margin:12px 0 6px 0;color:#e8e8ff;font-weight:600}
+    input,textarea{width:100%;box-sizing:border-box;background:#0f0f16;border:1px solid #2b2b3f;color:#fff;border-radius:10px;padding:10px}
+    textarea{min-height:110px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn{margin-top:16px;background:#ffd700;color:#111;border:none;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer}
+    .muted{font-size:12px;color:#9b9bc7;margin-top:10px}
+    .tag{display:inline-block;padding:4px 10px;border-radius:999px;background:#23233a;color:#ddd;font-size:12px;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📋 Formulário para entrar no Bonde</h1>
+    <p>Preencha com atenção. Ao enviar, o staff será notificado no Discord.</p>
+
+    <div class="tag">Discord: <b id="discordTag">...</b></div>
+
+    <form method="POST" action="/submit">
+      <input type="hidden" name="token" value="{{TOKEN}}" />
+
+      <label>Nick do Discord</label>
+      <input name="discordNick" value="{{DISCORD_TAG}}" readonly />
+
+      <label>Nick</label>
+      <input name="nick" placeholder="Seu nick" required />
+
+      <div class="row">
+        <div>
+          <label>Idade</label>
+          <input name="idade" type="number" min="5" max="120" placeholder="Ex: 16" required />
+        </div>
+        <div>
+          <label>Por quem foi recrutado</label>
+          <input name="recrutador" placeholder="Ex: @Fulano" required />
+        </div>
+      </div>
+
+      <label>Por que quer se juntar ao bonde</label>
+      <textarea name="motivo" placeholder="Explique..." required></textarea>
+
+      <label>Link do bonde</label>
+      <input name="linkBonde" value="https://www.roblox.com/share/g/1003923644" required />
+
+      <button class="btn" type="submit">Enviar Formulário</button>
+      <div class="muted">Seu link é único. Não compartilhe.</div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("discordTag").textContent = "{{DISCORD_TAG}}";
+  </script>
+</body>
+</html>
