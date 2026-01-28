@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, Events, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
 
-const db = require("./db/sqlite");
+const db = require("./sqlite");
 const { startWeb } = require("./server"); // ✅ corrigido
 const interactionHandler = require("./interactionHandler");
 
